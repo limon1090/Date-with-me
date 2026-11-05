@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ডেটে যাবে আমার সাথে? ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg1: #ffeef8;
+            --bg2: #fff0d6;
+            --card: #ffffff;
+            --ink: #4a1f3a;
+            --mut: #8b5a70;
+            --pink: #ff4f93;
+            --pink2: #ff8fb0;
+            --line: #ffd0e3;
+            --line-active: #ff4f93;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Hind Siliguri', system-ui, sans-serif;
+            color: var(--ink);
+            background: linear-gradient(120deg, var(--bg1), var(--bg2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 15px;
+            overflow-x: hidden;
+        }
+
+        .card {
+            background: var(--card);
+            width: 100%;
+            max-width: 420px;
+            border-radius: 24px;
+            padding: 28px 20px;
+            box-shadow: 0 10px 30px rgba(255, 79, 147, 0.15);
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1, h2 {
+            margin: 0 0 12px 0;
+            color: var(--pink);
+        }
+
+        p { color: var(--mut); margin: 0 0 16px 0; }
+
+        .big { font-size: 52px; animation: beat 1.2s infinite; }
+
+        @keyframes beat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .btns {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        button, .btn {
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 700;
+            border: 0;
+            border-radius: 999px;
+            padding: 12px 24px;
+            cursor: pointer;
+            color: #fff;
+            background: linear-gradient(135deg, var(--pink), var(--pink2));
+            transition: all 0.2s ease;
+        }
+
+        button:active { transform: scale(0.95); }
+
+        #no { background: #8e8e9a; position: relative; }
+
+        /* Form elements */
+        label { display: block; text-align: left; font-weight: 600; margin: 12px 0 4px; font-size: 14px; }
+        input[type="date"], input[type="time"], input[type="text"] {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 2px solid var(--line);
+            font-family: inherit;
+            outline: none;
+        }
+        input:focus { border-color: var(--pink); }
+
+        .opts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .opt {
+            border: 2px solid var(--line);
+            border-radius: 14px;
+            padding: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            background: #fff;
+        }
+
+        .opt.on {
+            border-color: var(--pink);
+            background: rgba(255, 79, 147, 0.1);
+            color: var(--pink);
+        }
+
+        .bkash-box {
+            background: #e2136e;
+            color: #fff;
+            border-radius: 16px;
+            padding: 16px;
+            margin: 15px 0;
+        }
+
+        .bkash-box input {
+            color: #000;
+            margin-top: 8px;
+        }
+
+        .err { color: #e0245e; font-size: 13px; margin-top: 6px; }
+
+        /* Music button */
+        #mu {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--pink);
+            color: #fff;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="card"></div>
+    <button id="mu">🎵</button>
+
+    <!-- Romantic Soft Background Audio -->
+    <audio id="bg-audio" loop preload="auto">
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        const CONFIG = {
+            BKASH: "01913432473",
+            WHATSAPP: "8801855644113",
+            HER_NAME: "প্রিয়তম"
+        };
+
+        const places = ["নারায়ণগঞ্জের ভেতরে", "নারায়ণগঞ্জের বাইরে"];
+        const foods = ["বার্গার 🍔", "চিকেন ফ্রাই 🍗", "কফি ☕", "চা 🍵", "ফুচকা 🥣", "আইসক্রিম 🍦", "বিরিয়ানি 🍛", "চকলেট 🍫"];
+
+        let state = {
+            date: '',
+            time: '',
+            until: '',
+            place: '',
+            foods: new Set(),
+            txId: ''
+        };
+
+        const card = document.getElementById('card');
+        const audio = document.getElementById('bg-audio');
+        const muBtn = document.getElementById('mu');
+
+        // Soft Volume Adjustment
+        audio.volume = 0.3;
+
+        muBtn.onclick = () => {
+            if (audio.paused) {
+                audio.play();
+                muBtn.textContent = '🔊';
+            } else {
+                audio.pause();
+                muBtn.textContent = '🎵';
+            }
+        };
+
+        // Screen 0: Proposal
+        function s0() {
+            card.innerHTML = `
+                <div class="big">💖</div>
+                <h2>Hey ${CONFIG.HER_NAME}!</h2>
+                <p>আমার সাথে ডেটে যাবে?</p>
+                <div class="btns">
+                    <button id="yes">Yes ❤️</button>
+                    <button id="no">No 💔</button>
+                </div>
+            `;
+
+            document.getElementById('yes').onclick = s1;
+            
+            const noBtn = document.getElementById('no');
+            noBtn.onmouseover = noBtn.onclick = () => {
+                const x = Math.random() * (window.innerWidth - 100);
+                const y = Math.random() * (window.innerHeight - 50);
+                noBtn.style.position = 'fixed';
+                noBtn.style.left = x + 'px';
+                noBtn.style.top = y + 'px';
+            };
+        }
+
+        // Screen 1: Date & Time
+        function s1() {
+            card.innerHTML = `
+                <h2>🎉 Yay! কখন যাবে?</h2>
+                <label>তারিখ:</label>
+                <input type="date" id="d">
+                <label>কয়টায় যাবে:</label>
+                <input type="time" id="t">
+                <label>কয়টা পর্যন্ত থাকবে:</label>
+                <input type="time" id="u">
+                <div class="err" id="e"></div>
+                <button style="margin-top:15px;" id="n1">পরের ধাপ ➔</button>
+            `;
+
+            document.getElementById('n1').onclick = () => {
+                const d = document.getElementById('d').value;
+                const t = document.getElementById('t').value;
+                const u = document.getElementById('u').value;
+                if (!d || !t || !u) {
+                    document.getElementById('e').textContent = 'সব ঘর পূরণ করো 😉';
+                    return;
+                }
+                state.date = d; state.time = t; state.until = u;
+                s2();
+            };
+        }
+
+        // Screen 2: Location
+        function s2() {
+            card.innerHTML = `
+                <h2>📍 কোথায় যাবে?</h2>
+                <div class="opts">
+                    ${places.map(p => `<div class="opt ${state.place === p ? 'on' : ''}" onclick="selPlace('${p}')">${p}</div>`).join('')}
+                </div>
+                <div class="err" id="e"></div>
+                <button style="margin-top:15px;" id="n2">পরের ধাপ ➔</button>
+            `;
+
+            document.getElementById('n2').onclick = () => {
+                if (!state.place) {
+                    document.getElementById('e').textContent = 'একটি জায়গা সিলেক্ট করো!';
+                    return;
+                }
+                s3();
+            };
+        }
+
+        window.selPlace = (p) => {
+            state.place = p;
+            s2();
+        };
+
+        // Screen 3: Food Selection (Multiple selection fixed)
+        function s3() {
+            card.innerHTML = `
+                <h2>🍽️ কী খাবে?</h2>
+                <div class="opts">
+                    ${foods.map(f => `<div class="opt ${state.foods.has(f) ? 'on' : ''}" onclick="toggleFood('${f}')">${f}</div>`).join('')}
+                </div>
+                <div class="err" id="e"></div>
+                <button style="margin-top:15px;" id="n3">পরের ধাপ ➔</button>
+            `;
+
+            document.getElementById('n3').onclick = () => {
+                if (state.foods.size === 0) {
+                    document.getElementById('e').textContent = 'কমপক্ষে একটি খাবার সিলেক্ট করো 😋';
+                    return;
+                }
+                s4();
+            };
+        }
+
+        window.toggleFood = (f) => {
+            if (state.foods.has(f)) state.foods.delete(f);
+            else state.foods.add(f);
+            s3();
+        };
+
+        // Screen 4: bKash Payment / Surprise
+        function s4() {
+            card.innerHTML = `
+                <h2>🎁 Surprise! সালামি/পেমেন্ট!</h2>
+                <div class="bkash-box">
+                    <p style="color:#fff; margin:0;">bKash Personal: <b>${CONFIG.BKASH}</b></p>
+                    <input type="text" id="tx" placeholder="TrxID (টাকা জমা দিলে লিখো)">
+                </div>
+                <button id="fin">কনফার্ম করো 💖</button>
+            `;
+
+            document.getElementById('fin').onclick = () => {
+                state.txId = document.getElementById('tx').value || 'দেওয়া হয়নি';
+                s5();
+            };
+        }
+
+        // Screen 5: Final Summary & WhatsApp Share
+        function s5() {
+            const foodList = Array.from(state.foods).join(', ');
+            const msg = `Hey! ডেটের প্ল্যান কনফার্ম করেছি:\n📅 তারিখ: ${state.date}\n⏰ সময়: ${state.time} - ${state.until}\n📍 জায়গা: ${state.place}\n🍔 খাবার: ${foodList}\n💳 TrxID: ${state.txId}`;
+            
+            const waUrl = `https://wa.me/${CONFIG.WHATSAPP}?text=${encodeURIComponent(msg)}`;
+
+            card.innerHTML = `
+                <h2>🎉 অল সেট!</h2>
+                <p>সব তথ্য হোয়াটসঅ্যাপে পাঠিয়ে দাও!</p>
+                <a href="${waUrl}" target="_blank" class="btn" style="display:inline-block; text-decoration:none; margin-top:10px;">WhatsApp-এ পাঠাও 💬</a>
+            `;
+        }
+
+        // Start App
+        s0();
+    </script>
+</body>
+</html>
